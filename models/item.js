@@ -23,6 +23,16 @@ itemSchema.statics.findByName = function(name, callback) {
   return this.find({ name: new RegExp(name, 'i') }, callback)
 }
 
+itemSchema.options.toJSON = {
+    getters: true,
+    virtuals: true,
+    transform: function (doc, ret, options) {
+      delete ret._id
+      delete ret.__v
+      return ret
+    }
+}
+
 const itemModel = mongoose.model('Item', itemSchema)
 
 module.exports = itemModel

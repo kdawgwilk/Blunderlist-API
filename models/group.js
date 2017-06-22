@@ -10,4 +10,14 @@ const groupSchema = new Schema({
     }
 })
 
-module.exports = mongoose.model('Group', groupSchema);
+groupSchema.options.toJSON = {
+    getters: true,
+    virtuals: true,
+    transform: function (doc, ret, options) {
+      delete ret._id
+      delete ret.__v
+      return ret
+    }
+}
+
+module.exports = mongoose.model('Group', groupSchema)

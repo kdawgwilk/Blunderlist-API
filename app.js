@@ -2,10 +2,29 @@ const express    = require('express')
 const app        = express()
 const bodyParser = require('body-parser')
 const mongoose   = require('mongoose')
+const passport   = require('passport')
+const BasicStrategy = require('passport-http').BasicStrategy
 
 const items      = require('./routes/items')
 const groups     = require('./routes/groups')
+const users      = require('./routes/users')
 
+const User       = require('./models/user')
+
+passport.use(new BasicStrategy(function (username, password, callback) {
+  User.findOne({ username: username }, function (err, user) {
+    if (err) { 
+      return callback(err)
+    }
+    if (!user) { 
+      return callback(null, false)
+    }
+    if (user.password != password) { 
+      return callback(null, false)
+    }
+    return callback(null, user)
+  })
+}))
 
 // connect to your local DB
 // mongod
@@ -21,31 +40,12 @@ mongoose.connect('mongodb://localhost/Blunderlist')
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
-const myLogger = function (req, res, next) {
-  const isUserAuthenticated = true
-  // console.log('LOGGED')
-  if (isUserAuthenticated) {
-    next()
-  } else {
-    res.status(401)
-    res.json("Unauthorized")
-  }
-}
+app.use(passport.initialize())
+app.use(users)
+app.all('*', passport.authenticate('basic', { session: false }))
+app.use(items)
+app.use(groups)
 
-app.use(myLogger)
-
-
-app.post('/', function (req, res) {
-    res.json(req.body.name)
-})
-
-// http://localhost:3000/Kaden
-// app.get('/:id', function (req, res) {
-//     res.json('Hello, ' + req.params['id'])
-// })
-
-app.use('/', items)
-app.use('/', groups)
 
 app.listen(3000, function () {
   console.log('Blunderlist API listening on port 3000!')
