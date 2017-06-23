@@ -49,10 +49,10 @@ const userSchema = new Schema({
         default: null
     },
     google: {
-        id: '',
-        token: '',
-        name: '',
-        email: ''
+        id: String,
+        token: String,
+        name: String,
+        email: String
     }
 }, { versionKey: false })
 
