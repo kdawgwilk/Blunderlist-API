@@ -1,0 +1,9 @@
+<h1>Hello, {{ name }}!</h1>
+
+<ul>
+    {{#each list}}
+        {{#if false}}
+            <li>{{@index}}. {{ this }}</li>
+        {{/if}}
+    {{/each}}
+</ul>

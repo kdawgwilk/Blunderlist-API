@@ -47,6 +47,12 @@ const userSchema = new Schema({
     deletedOn: {
         type: Date,
         default: null
+    },
+    google: {
+        id: '',
+        token: '',
+        name: '',
+        email: ''
     }
 }, { versionKey: false })
 
